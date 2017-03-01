@@ -6,22 +6,28 @@ data:
     # Module name, optional
     # Typically filled in by the buildsystem, using the VCS repository
     # name as the name of the module.
-    name: foo
+    name: docker
     # Module update stream, optional
     # Typically filled in by the buildsystem, using the VCS branch name
     # as the name of the stream.
-    stream: stream-name
+    # stream: stream-name
     # Module version, integer, optional, cannot be negative
     # Typically filled in by the buildsystem, using the VCS commit
     # timestamp.  Module version defines upgrade path for the particular
     # update stream.
-    version: 20160927144203
+    # version: 20160927144203
     # A short summary describing the module, required
-    summary: An example module
+    summary: Automates deployment of containerized applications
     # A verbose description of the module, required
     description: >
-        A module for the demonstration of the metadata format. Also,
-        the obligatory lorem ipsum dolor sit amet goes right here.
+        Docker is an open-source engine that automates the deployment of any
+        application as a lightweight, portable, self-sufficient container that will
+        run virtually anywhere.
+
+        Docker containers can encapsulate any payload, and will run consistently on
+        and between virtually any server. The same container that a developer builds
+        and tests on a laptop will run at scale, in production*, on VMs, bare-metal
+        servers, OpenStack clusters, public instances, or combinations of the above.
     # Module and content licenses in the Fedora license identifier
     # format, required
     license:
@@ -34,9 +40,7 @@ data:
         # A list of licenses used by the packages in the module.
         # This should be populated by build tools.
         content:
-            - Beerware
-            - GPLv2+
-            - zlib
+            - ASL 2.0
     # Extensible metadata block
     # A dictionary of user-defined keys and values.
     # Optional.  Defaults to an empty dictionary.
@@ -50,20 +54,20 @@ data:
         # Keys are module names, values are the stream names
         # These modules define the buildroot for this module
         buildrequires:
-            generational-core: and-its-stream-name
-            generational-core-build: and-its-stream-name-too
+            brt: something
+            golang: something-else
         # Run-time dependencies of this module, optional
         # Keys are module names, values are their stream names
         requires:
-            generational-core: and-its-stream-name
+            i-dont: know
     # References to external resources, typically upstream, optional
     references:
         # Upstream community website, if it exists, optional
-        community: http://www.example.com/
+        community: https://projectatomic.io
         # Upstream documentation, if it exists, optional
-        documentation: http://www.example.com/
+        documentation: http://www.projectatomic.io/docs/
         # Upstream bug tracker, if it exists, optional
-        tracker: http://www.example.com/
+        tracker: https://github.com/projectatomic/docker
     # Profiles define the end user's use cases for the module and consist
     # of package lists of components to be installed by default if this
     # module is enabled.  The keys here are the profile names and contain
@@ -75,9 +79,7 @@ data:
         # Optional, defaults to empty lists.
         default:
             rpms:
-                - bar
-                - bar-extras
-                - baz
+                - docker
         # An example minimal profile only installing one component.
         # Optional, just like any other profile.
         # XXX: What happens if the system wants to use an undefined
@@ -85,9 +87,25 @@ data:
         # an empty list?
         minimal:
             # A verbose description of the module, optional
-            description: Minimal profile installing only the bar package.
+            description: Minimal profile installing only the docker package.
             rpms:
-                - bar
+                - docker
+        vim:
+            description: Profile for vim users which installs Dockerfile syntax support for vim.
+            rpms:
+                - docker-vim
+        zsh:
+            description: Profile for zsh users which installs completion.
+            rpms:
+                - docker-zsh-completion
+        full:
+            description: Install all packages.
+            rpms:
+                - docker
+                - docker-common
+                - docker-rhel-push-plugin
+                - docker-vim
+                - docker-zsh-completion
     # Module API
     # TODO: Define more API types
     api:
@@ -100,18 +118,20 @@ data:
         # of bar, bar-extras.
         # Optional, defaults to an empty list.
         rpms:
-            - bar
-            - bar-extras
-            - baz
-            - xxx
+            - docker
+            - docker-common
+            - docker-rhel-push-plugin
+            - docker-vim
+            - docker-zsh-completion
+
     # Module component filters
     filter:
         # RPM names not to be included in the module.
         # By default, all built binary RPMs are included.  In the example
         # we exclude a subpackage of bar, bar-nonfoo from our module.
         # Optional, defaults to an empty list.
-        rpms:
-            - baz-nonfoo
+        # rpms:
+        #     - baz-nonfoo
     # Functional components of the module, optional
     components:
         # RPM content of the module, optional
@@ -119,67 +139,40 @@ data:
         # additional information.
         # TODO: Define architectures to build for
         rpms:
-            bar:
+            docker:
                 # Why is this component present.
                 # A simple, free-form string.
                 # Required.
-                rationale: We need this to demonstrate stuff.
+                rationale: This package carries the primary functionality.
                 # Use this repository if it's different from the build
                 # system configuration.
                 # Optional.
-                repository: https://pagure.io/bar.git
+                repository: http://pkgs.fedoraproject.org/cgit/rpms/docker
                 # Use this lookaside cache if it's different from the
                 # build system configuration.
                 # Optional.
-                cache: https://example.com/cache
+                # cache: https://example.com/cache
                 # Use this specific commit has, branch name or tag for
                 # the build.  If ref is a branch name, the branch HEAD
                 # will be used.  If no ref is given, the master branch
                 # is assumed.
                 # Optional.
-                ref: 26ca0c0
-            # baz has no extra options
-            baz:
-                rationale: This one is here to demonstrate other stuff.
-            xxx:
-                rationale: xxx demonstrates arches and multilib.
-                # xxx is only available on the listed architectures.
-                # Optional, defaults to all available arches.
-                arches: [ i686, x86_64 ]
-                # a list of architectures with multilib
-                # installs, i.e. both i686 and x86_64
-                # versions will be installed on x86_64.
-                # Optional, defaults to no multilib.
-                multilib: [ x86_64 ]
-            xyz:
-                rationale: xyz is a bundled dependency of xxx.
-                # Build order group
-                # When building, components are sorted by build order tag
-                # and built in batches grouped by their buildorder value.
-                # Built batches are then re-tagged into the buildroot.
-                # Multiple components can have the same buildorder index
-                # to map them into build groups.
-                # Optional, defaults to zero.
-                # Integer, negative values are allowed.
-                # In this example, bar, baz and xxx are built first in
-                # no particular order, then tagged into the buildroot,
-                # then, finally, xyz is built.
-                buildorder: 10
+                ref: master
         # Module content of this module
         # Included modules are built in the shared buildroot, together with
         # other included content.  Keys are module names, values additional
         # component information.
         # Optional
-        modules:
-            includedmodule:
-                # Why is this module included?
-                # Required
-                rationale: Included in the stack, just because.
-                # Link to VCS repository that contains the modulemd file
-                # if it differs from the buildsystem default configuration.
-                # Optional.
-                repository: https://pagure.io/includedmodule.git
-                # See the rpms ref.
-                ref: somecoolbranchname
-                # See the rpms buildorder.
-                buildorder: 100
+        # modules:
+        #     includedmodule:
+        #         # Why is this module included?
+        #         # Required
+        #         rationale: Included in the stack, just because.
+        #         # Link to VCS repository that contains the modulemd file
+        #         # if it differs from the buildsystem default configuration.
+        #         # Optional.
+        #         repository: https://pagure.io/includedmodule.git
+        #         # See the rpms ref.
+        #         ref: somecoolbranchname
+        #         # See the rpms buildorder.
+        #         buildorder: 100
