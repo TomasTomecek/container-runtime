@@ -44,22 +44,22 @@ data:
     # Extensible metadata block
     # A dictionary of user-defined keys and values.
     # Optional.  Defaults to an empty dictionary.
-    xmd:
-      some_key: some_data
+    # xmd:
+    #   some_key: some_data
     # Module dependencies, if any.  Optional.
     # TODO: Provides, conflicts, obsoletes, recommends, etc.
     # TODO: Stream name globbing or regular expression support
-    dependencies:
-        # Build dependencies of this module, optional
-        # Keys are module names, values are the stream names
-        # These modules define the buildroot for this module
-        buildrequires:
-            brt: something
-            golang: something-else
-        # Run-time dependencies of this module, optional
-        # Keys are module names, values are their stream names
-        requires:
-            i-dont: know
+    # dependencies:
+    #     # Build dependencies of this module, optional
+    #     # Keys are module names, values are the stream names
+    #     # These modules define the buildroot for this module
+    #     buildrequires:
+    #         brt: something
+    #         golang: something-else
+    #     # Run-time dependencies of this module, optional
+    #     # Keys are module names, values are their stream names
+    #     requires:
+    #         i-dont: know
     # References to external resources, typically upstream, optional
     references:
         # Upstream community website, if it exists, optional
@@ -106,6 +106,12 @@ data:
                 - docker-rhel-push-plugin
                 - docker-vim
                 - docker-zsh-completion
+                - docker-rhsubscription
+                - docker-v1.10-migrator
+                - docker-common
+                - docker-logrotate
+                - docker-lvm-plugin
+                - docker-novolume-plugin
     # Module API
     # TODO: Define more API types
     api:
@@ -123,9 +129,14 @@ data:
             - docker-rhel-push-plugin
             - docker-vim
             - docker-zsh-completion
-
+            - docker-rhsubscription
+            - docker-v1.10-migrator
+            - docker-common
+            - docker-logrotate
+            - docker-lvm-plugin
+            - docker-novolume-plugin
     # Module component filters
-    filter:
+    filter: ~
         # RPM names not to be included in the module.
         # By default, all built binary RPMs are included.  In the example
         # we exclude a subpackage of bar, bar-nonfoo from our module.
