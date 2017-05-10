@@ -49,18 +49,14 @@ data:
     # Module dependencies, if any.  Optional.
     # TODO: Provides, conflicts, obsoletes, recommends, etc.
     # TODO: Stream name globbing or regular expression support
-    # dependencies:
-    #     # Build dependencies of this module, optional
-    #     # Keys are module names, values are the stream names
-    #     # These modules define the buildroot for this module
-    #     buildrequires:
-    #         brt: something
-    #         golang: something-else
-    #     # Run-time dependencies of this module, optional
-    #     # Keys are module names, values are their stream names
-    #     requires:
-    #         i-dont: know
-    # References to external resources, typically upstream, optional
+    dependencies:
+        buildrequires:
+            shared-userspace: f26
+            base-runtime: f26
+            common-build-dependencies: f26
+            common-build-dependencies-bootstrap: f26
+        requires:
+            shared-userspace: f26
     references:
         # Upstream community website, if it exists, optional
         community: https://projectatomic.io
@@ -112,6 +108,7 @@ data:
                 - docker-logrotate
                 - docker-lvm-plugin
                 - docker-novolume-plugin
+                - container-storage-setup
     # Module API
     # TODO: Define more API types
     api:
@@ -135,6 +132,7 @@ data:
             - docker-logrotate
             - docker-lvm-plugin
             - docker-novolume-plugin
+            - container-storage-setup
     # Module component filters
     filter: ~
         # RPM names not to be included in the module.
@@ -145,45 +143,10 @@ data:
         #     - baz-nonfoo
     # Functional components of the module, optional
     components:
-        # RPM content of the module, optional
-        # Keys are the VCS/SRPM names, values dictionaries holding
-        # additional information.
-        # TODO: Define architectures to build for
         rpms:
             docker:
-                # Why is this component present.
-                # A simple, free-form string.
-                # Required.
                 rationale: This package carries the primary functionality.
-                # Use this repository if it's different from the build
-                # system configuration.
-                # Optional.
-                repository: http://pkgs.fedoraproject.org/cgit/rpms/docker
-                # Use this lookaside cache if it's different from the
-                # build system configuration.
-                # Optional.
-                # cache: https://example.com/cache
-                # Use this specific commit has, branch name or tag for
-                # the build.  If ref is a branch name, the branch HEAD
-                # will be used.  If no ref is given, the master branch
-                # is assumed.
-                # Optional.
-                ref: master
-        # Module content of this module
-        # Included modules are built in the shared buildroot, together with
-        # other included content.  Keys are module names, values additional
-        # component information.
-        # Optional
-        # modules:
-        #     includedmodule:
-        #         # Why is this module included?
-        #         # Required
-        #         rationale: Included in the stack, just because.
-        #         # Link to VCS repository that contains the modulemd file
-        #         # if it differs from the buildsystem default configuration.
-        #         # Optional.
-        #         repository: https://pagure.io/includedmodule.git
-        #         # See the rpms ref.
-        #         ref: somecoolbranchname
-        #         # See the rpms buildorder.
-        #         buildorder: 100
+                ref: f26
+            container-storage-setup:
+                rationale: Runtime dependency of docker.
+                ref: f26
